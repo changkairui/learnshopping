@@ -62,4 +62,20 @@
 ##### 阿里云部署
 
 --------------2018/12/4---------------------
-
+#### 远程分支的添加跟合并
+##### 创建分支：
+       git checkout -b dev
+##### 跟远程仓库合并：
+       git push origin head -u 
+##### 将项目需求提交到dev上
+       git push origin dev
+##### 切换到dev
+       git checkout dev
+##### 将dev拉回到本地的仓库
+       git pull origin dev
+##### 切换到master分支
+       git checkout master
+##### 将dev分支的文件合并到master
+       git merge dev
+##### 提交master
+       git push origin master
