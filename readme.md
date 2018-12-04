@@ -101,8 +101,8 @@
     `role`      int(4)      not null  comment '用户角色',
     `create_time`   datetime    comment '创建时间',
     `update_time`  datetime   comment '修改时间',
-    primary key(`id`),
-    unique key `user_name_index`(`username`) using btree
+    PRIMARY KRY(`id`),
+    UNIQUE KEY `user_name_index`(`username`) USING BTREE
     )ENGINE=InnoDB DEFAULT CHARSET=UTF8;
  ```
 ### 类别表
