@@ -81,7 +81,7 @@
     select count(1) from neuedu_user where username=#{username}
   </select>
 
-  <!-- -->
+  <!-- 根据用户名和密码查询-->
   <select id="selectUserByUsernameAndPassword" parameterType="map" resultMap="BaseResultMap">
     select id, username, password, email, phone, question, answer, role, create_time,
     update_time

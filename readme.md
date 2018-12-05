@@ -271,4 +271,23 @@
     2.配置json格式数据返回
     3.配置视图解析器
  ```    
+### 开发用户接口
+ ```
+    1.先会封装高复用的对象，例如：状态码，返回接口的数据，以及提示信息
+    创建private无参的构造方法，和有参构造方法(重载)
+    2.对外提供static访问的方法，返回status状态，将status设置为常量
+    
+    登录：
+    1.UserController根据需求文档的要求，添加路径、创建登录方法、向下调用IUserService进行
+    业务的处理
+    2.IUserService接口创建登录方法，并将username，password传入
+    IUserServiceImpl实现login方法进行业务上的处理，
+        step1:参数非空校验
+        step2:检查username是否存在
+        step3:根据用户名和密码查询
+        step4:处理结果并返回
+    IUserService向下调用dao接口进行数据的查询，
+    3.dao接口定义查找username的方法，和根据用户名密码查询方法传入username，password参数(参数多个时，参数的类型为map)
+    4.在mapper文件中进行对数据库的查询，然后将数据查到的数据向上返回
+ ```
     
