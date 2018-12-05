@@ -239,9 +239,35 @@
  ```
 ### 项目架构--四层架构
  ```
-    视图层
+    视图层(倒序开发)向下调用
     控制层controller
     业务逻辑层service
         接口和实现类
-    Dao层
+    Dao层(mapper映射文件)
  ```
+### SSM框架搭建
+ ```
+    一、引入插件：
+    1.配置mysql驱动包
+    2.配置实体类
+    3.配置sql文件(mapper)
+    4.配置dao接口
+    5.配置数据表
+    会自动生成mapper文件，dao mapper映射器和实体类
+    
+    二、配置db.properties
+    
+    三、配置spring、mybatis、springmvc
+    spirng：
+    1.开启注解，将覆盖到的包交给IOC容器管理
+    2.引入db.properties
+    3.配置连接池
+    4.sqlSessionFactory，引入连接池、引入mybatis全局配置、
+    引入mapper sql文件的位置、配置MapperScannerConfigurer会动态代理生成符合dao接口的代理实现类
+    
+    springmvc：
+    1.开启注解，管理controller
+    2.配置json格式数据返回
+    3.配置视图解析器
+ ```    
+    
