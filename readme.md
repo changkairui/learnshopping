@@ -200,7 +200,8 @@
     `create_time`    datetime  default null  comment '已创建时间',
     `update_time`    datetime  default null  comment '更新时间',
     PRIMARY KEY(`id`),
-    KEY `order_no_index`(`order_no`) USING BTREE
+    KEY `order_no_index`(`order_no`) USING BTREE,
+    KEY `order_no_user_id_index`(`order_no`,`user_id`) USING BTREE
     )ENGINE=InnoDB DEFAULT CHARSET=UTF8;
  ```
  
