@@ -272,22 +272,145 @@
     3.配置视图解析器
  ```    
 ### 开发用户接口
+#### 登录
  ```
     1.先会封装高复用的对象，例如：状态码，返回接口的数据，以及提示信息
     创建private无参的构造方法，和有参构造方法(重载)
     2.对外提供static访问的方法，返回status状态，将status设置为常量
     
     登录：
-    1.UserController根据需求文档的要求，添加路径、创建登录方法、向下调用IUserService进行
-    业务的处理
-    2.IUserService接口创建登录方法，并将username，password传入
-    IUserServiceImpl实现login方法进行业务上的处理，
+    1.UserController根据需求文档的要求，添加路径、创建登录方法、向下调用IUserService进行业务的处理
+    2.IUserService接口创建登录方法，并将username，password传入，IUserServiceImpl实现login方法进行业务上的处理，
         step1:参数非空校验
         step2:检查username是否存在
+            调用check_valid方法，check_valid是判断用户不存在才成功
+            如果isSuccess成功用户不存在
         step3:根据用户名和密码查询
+            dao中定义的返回值为userInfo，进行密码的加密，如果userInfo==null证明密码错误
         step4:处理结果并返回
+            会给我们返回一个用户userInfo给前台
     IUserService向下调用dao接口进行数据的查询，
     3.dao接口定义查找username的方法，和根据用户名密码查询方法传入username，password参数(参数多个时，参数的类型为map)
     4.在mapper文件中进行对数据库的查询，然后将数据查到的数据向上返回
  ```
-    
+ #### 注册
+ ```
+    1.controller：
+    访问路径：/portal/user/register.do
+    request请求参数：String username, String password,String email,String phone,String question,String answer
+    框架可以帮我们返回一个UserInfo对象
+    2.service：
+    创建register方法实现登录功能，将UserInfo对象传入
+    Impl里实现register接口，进行判断：
+        step1:输入参数的非空校验
+        step2:判断用户名是否存在
+            checkUsername(userinfo.getUsername())
+            >0 表示用户名邮箱存在，check_valid方法验证用户名不存在
+            取反表示用户名已存在
+        step3:判断邮箱是否存在
+            checkEmail(userinfo.getEmail())
+        step4:注册
+            setRole(普通用户)
+            setPassword(密码)
+            >0 表示注册成功
+        step4:返回结果
+    3.dao:
+    在dao接口中定义查询和邮箱username和email的方法，mapper映射文件会对数据库进行查询
+ ```
+#### 检查用户名是否有效
+ ```
+     1.controller：
+     访问路径：/portal/user/check_valid.do
+     request请求参数：String str,String type(用户名) type是usernam或email 对应的 str是用户名或邮箱
+     将str和type返回
+     2.service：
+     创建check_valid检查用户名是否有效方法，将参数str type传入
+     Impl里实现register接口，进行判断：
+        step1:参数的非空校验
+        step2:用户名是否有效
+            如果type equals username代表用户名存在
+            否则注册成功
+        step3:邮箱是否有效
+            如果type equals email代表邮箱存在
+            否则注册成功
+        step4:返回结果
+      3.dao:
+      将str传入到查询出的用户名和邮箱，进行判断
+  ```
+#### 获取登录用户信息和详细信息
+ ```
+     1.controller：
+     访问路径：/portal/user/get_user_info.do
+     request请求参数：无参数
+        逻辑：只有当用户登录后才能拿到用户的信息，就需要我们将登录成功后将登录返回的userInfo date
+     保存到session中，通过session绑定，getAttribute到USERNAME，判断如果不为空是userInfo 类型，我们
+     就是set到用户的信息，详细信息就直接返回这个对象userInfo
+ ```
+  
+##### 根据用户名获取密保问题
+ ```
+    1.controller：
+    访问路径：/portal/user/forget_get_question.do?username=admin
+    request请求参数：username
+    2.service：
+    创建forget_get_question根据用户名获取密保问题方法
+    Impl里实现forget_get_question接口，进行判断：
+        step1:参数的非空校验
+        step2:用户名是否存在
+            调用check_valid判断，如果我传入的username的status不等于3(用户名已存在)
+            表示用户名不存在
+        step3:查询密保问题
+            查询到密保问题后进行参数的非空检验
+        step4:返回结果
+            将question返回
+    3.dao:
+        根据用户名查询密保问题，创建selectQuestionByUsername方法将username传入
+ ```
+#### 提交问题答案
+ ```
+    1.controller:
+    访问路径：/portal/user/forget_check_answer.do
+    request请求参数：String username,String question,String answer
+    2.service：
+    创建forget_check_answer提交问题答案方法
+    Impl里实现forget_check_answer接口，进行判断：
+        step1:参数的非空校验
+        step2:校验答案
+            将dao查询结果返回，判断count <=0 表示答案错误
+            用UUID随机生成一个字符串
+            通过username token 返回用户的唯一标识
+            以username为key来获取token
+        step3:返回结果
+    3.dao:
+    创建checkAnswerByUsernameAndQuestion提交问题答案方法将username,password,question传入，因为参数是多个
+    需要使用@Param注解，以key-value形式查询
+ ```
+#### 忘记密码的重置密码
+ ```
+    1.controller:
+    访问路径：/portal/user/forget_reset_password.do
+    request请求参数：String username,String passwordNew,String forgetToken
+    2.service：
+    创建forget_reset_password忘记密码的重置密码方法
+    Impl里实现forget_reset_password接口，进行判断：
+        step1:参数的非空校验
+        
+        step2:校验token
+          修改密码的时候要考虑到一个越权问题
+          横向越权：权限都是一样的，a用户去修改其他用户  
+          纵向越权：低级别用户修改高级别用户的权限
+          解决：提交答案成功的时候，服务端会给客户端返回一个值（数据），这个数据在客户端服务端都分别保存，
+          当用户去重置密码的时候，用户端必须带上这个数据，只有拿到数据服务端校验合法了才能修改，
+          所以服务端要给客户端传一个token,服务端客户端都分别保存，然后两个进行校验
+          
+          如果当前登录的是张三，修改密码的时候会让回答问题，会返回给一个张三的token，如果
+          张三想去改李四的密码，但没有李四token
+          
+          如果服务端和传入用户名的token不一样，表示不能修改别人的密码
+        step3:更新密码
+          将dao查询结果返回，判断count <=0 表示密码修改失败
+        step3:返回结果
+     3.dao:
+    创建updatePasswordByUsername更新密码法将username,password传入，因为参数是多个
+    需要使用@Param注解，以key-value形式查询   
+ ```

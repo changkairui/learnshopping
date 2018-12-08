@@ -91,7 +91,6 @@ public class IUserServiceImpl implements IUserService {
 
 
         //step3:根据用户名和密码查询
-        System.out.println(MD5Utils.getMD5Code(password));
         UserInfo userInfo = userInfoMapper.selectUserByUsernameAndPassword(username,MD5Utils.getMD5Code(password));
         if(userInfo==null){
             //密码错误
