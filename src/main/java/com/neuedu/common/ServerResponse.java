@@ -43,7 +43,7 @@ public class ServerResponse <T>{
 
     /**
      * 访问成功
-     *对外提供的访问方法
+     * 对外提供的访问方法
      * 返回status
      */
     public static  ServerResponse createServerResponseBySuccess(){

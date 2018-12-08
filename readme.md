@@ -98,7 +98,7 @@
     `phone`     varchar(11) not null comment '联系方式',
     `question`  varchar(100) not null comment '密保问题',
     `answer`    varchar(100) not null comment '答案',
-    `role`      int(4)      not null  comment '用户角色',
+    `role`      int(4)      not null  comment '用户角色 0:普通用户 1:管理员', 
     `create_time`   datetime    comment '创建时间',
     `update_time`  datetime   comment '修改时间',
     PRIMARY KRY(`id`),
