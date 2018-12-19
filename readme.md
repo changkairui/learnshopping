@@ -1,7 +1,7 @@
 ## 电商项目-需求分析
 ### 核心-购买
 #### 一、用户模块
-##### 登录
+#### 登录
 ##### 注册
 ##### 忘记密码
 ##### 获取用户信息
@@ -391,7 +391,7 @@
     访问路径：/portal/user/forget_reset_password.do
     request请求参数：String username,String passwordNew,String forgetToken
     2.service：
-    创建forget_reset_password忘记密码的重置密码方法
+    创建forget_reset_password忘记密码的重置密码方法，
     Impl里实现forget_reset_password接口，进行判断：
         step1:参数的非空校验
         
@@ -413,4 +413,111 @@
      3.dao:
     创建updatePasswordByUsername更新密码法将username,password传入，因为参数是多个
     需要使用@Param注解，以key-value形式查询   
+ ```
+ 
+### 类别模块
+#### 学习目标
+      如何设计及封装无限层级的树状数据结构
+      递归算法的设计思想
+      如何处理复杂对象重排
+      重写hashcode和equals的注意事项
+
+#### 查询品类子节点
+ ```
+    首先先判断用户是否登录，判断用户是否有权限
+    1.controller:
+    访问路径：/manage/category/get_category.do
+    request请求参数：Integer categoryId
+    2.service：
+    创建get_category查询品类子节点方法，
+    Impl里实现get_category接口，进行判断：
+        step1:参数的非空校验
+        
+        step2:根据categoryId查询类别
+            selectByPrimaryKey查询类别categoryId
+            判断是否为空
+            
+        step3:查询子类别
+            findChlidCategory查询子类别categoryId，返回值，
+            为List<Category>集合，将dao查到的categoryId返回，
+            
+            
+        step4：返回结果
+    3.dao:
+    创建findChlidCategory查询品类子节点方法categoryId传入，parent_id=#{categoryId}，
+    将categoryId返回
+ ```
+ 
+#### 增加节点
+ ```
+     1.controller:
+        访问路径：/manage/category/add_category.do
+        request请求参数：parentId(default=0) categoryName
+        2.service：
+        创建add_category增加节点方法，
+        Impl里实现add_category接口，进行判断：
+            step1:参数的非空校验
+            
+            step2:添加节点
+               因为insert传入的参数是一个Category对象，
+               所以在这里需要new一个Category对象来接受，
+               设置新的名字、父类id、状态值，判断是否>0，
+               >0则表示添加成功
+               
+           step3:返回结果
+     
+        3.dao:
+        创insert增加节点方法Category实体类传入，返回值为int，
+        >0则表示添加成功
+ ```
+
+#### 修改品类名字
+ ```
+     1.controller:
+        访问路径：/manage/category/set_category_name.do
+        request请求参数：categoryId categoryName
+        2.service：
+        创建set_category_name修改品类名字方法，
+        Impl里实现set_category_name接口，进行判断：
+           step1:参数的非空校验
+            
+           step2:根据categoryId查询
+               先查询categoryId，判断categoryId是否为空，
+               不为空进行修改
+               
+           step3:修改
+                因为updateByPrimaryKey传入的参数是一个Category对象，
+                修改它的名字，判断是否>0，>0则表示添加成功
+           step4:返回结果
+     
+        3.dao:
+        创updateByPrimaryKey修改品类名字方法Category实体类传入，返回值为int，
+        >0则表示添加成功
+ ```
+ 
+#### 获取当前分类id及递归子节点categoryId
+ ```
+     1.controller:
+        访问路径：/manage/category/get_deep_category.do
+        request请求参数：categoryId
+        2.service：
+        创建get_deep_category获取当前类下的子类(递归)方法，
+        Impl里实现get_deep_category接口，进行判断：
+           step1:参数的非空校验
+            
+           step2:查询
+               调用findAllChildCategory方法传入categorySet集合，
+               创建categorySet集合，
+               因为返回时Integer类型需要转换一下，通过迭代器遍历
+               set集合，每个遍历完的集合得到的都是泛型，在将integerSet
+               添加返回
+               
+           创建一个方法，查询出本节点，如果查询的结果不为空，
+           当category添加到categorySet集合中，查询categoryId下
+           的子节点，判断categoryList不为空并且长度>0，遍历这个
+           集合，对每个节点调用findAllChildCategory方法
+     
+        3.dao:
+        创updateByPrimaryKey修改品类名字方法Category实体类传入，返回值为int，
+        >0则表示添加成功
  ```

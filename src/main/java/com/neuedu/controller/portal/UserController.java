@@ -106,4 +106,30 @@ public class UserController {
     public ServerResponse forget_reset_password(String username,String passwordNew,String forgetToken){
         return userService.forget_reset_password(username,passwordNew,forgetToken);
     }
+
+    /**
+     * 退出登录
+     */
+    @RequestMapping(value = "logout.do")
+    public ServerResponse logout(HttpSession session){
+        session.removeAttribute(Const.CURRENTUSER);
+        return ServerResponse.createServerResponseBySuccess();
+    }
+
+    /**
+     *登录中状态重置密码
+     */
+    @RequestMapping(value = "reset_password.do")
+    public ServerResponse reset_password(HttpSession session, String passwordOld,String passwordNew){
+
+        Object o = session.getAttribute(Const.CURRENTUSER);
+        if (o!=null && o instanceof UserInfo){
+            UserInfo userInfo = (UserInfo)o;
+            return userService.reset_password(userInfo,passwordOld,passwordNew);
+
+        }
+        return ServerResponse.createServerResponseByError(ResponseCode.USER_NOT_LOGIN.getStatus(),ResponseCode.USER_NOT_LOGIN.getMsg());
+    }
+
+
 }

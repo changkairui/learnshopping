@@ -3,6 +3,8 @@ package com.neuedu.service;
 import com.neuedu.common.ServerResponse;
 import com.neuedu.pojo.UserInfo;
 
+import javax.servlet.http.HttpSession;
+
 public interface IUserService {
     /**
      * 注册接口
@@ -35,4 +37,9 @@ public interface IUserService {
      */
     public ServerResponse forget_reset_password(String username,String passwordNew,String forgetToken);
 
+
+    /**
+     * 登录状态下修改密码
+     */
+    public ServerResponse reset_password(UserInfo userInfo, String passwordOld, String passwordNew);
 }
